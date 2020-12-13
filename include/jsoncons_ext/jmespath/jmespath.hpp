@@ -2555,9 +2555,17 @@ namespace jmespath {
             reference evaluate(reference val, eval_context& context, std::error_code&) const override
             {
                 //std::cout << "(identifier_selector " << identifier_  << " ) " << pretty_print(val) << "\n";
-                if (val.is_object() && val.contains(identifier_))
+                if (val.is_object())
                 {
-                    return val.at(identifier_);
+                    auto it = val.find(identifier_);
+                    if (it != val.object_range().end())
+                    {
+                        return it->value();
+                    }
+                    else
+                    {
+                        return context.null_value();
+                    }
                 }
                 else 
                 {
